@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+@import "@fontsource/bebas-neue/400.css";
+@import "@fontsource/allura/400.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
+@theme {
+  --color-paper: #f5e6cd;
+  --color-paper-soft: #efdfc2;
+  --color-cinema: #0a0a0a;
+  --color-cinema-soft: #14110e;
+  --color-graphite: #2a2622;
+  --color-apple: #c8102e;
+  --color-apple-soft: #e0233e;
+  --color-gold: #c9a961;
+  --color-gold-soft: #d8be7c;
+
+  --font-display: "Bebas Neue", "Impact", system-ui, sans-serif;
+  --font-script: "Allura", "Brush Script MT", cursive;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --spacing-section: 6rem;
+
+  --radius-card: 1.25rem;
+
+  --animate-pulse-soft: pulse-soft 2.5s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-bounce-down: bounce-down 1.8s ease-in-out infinite;
+  --animate-grain: grain 8s steps(8) infinite;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55); }
+  70% { box-shadow: 0 0 0 18px rgba(37, 211, 102, 0); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes bounce-down {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-3%, -2%); }
+  20% { transform: translate(2%, 4%); }
+  30% { transform: translate(-4%, 2%); }
+  40% { transform: translate(3%, -3%); }
+  50% { transform: translate(-2%, 5%); }
+  60% { transform: translate(4%, 0); }
+  70% { transform: translate(-3%, -4%); }
+  80% { transform: translate(2%, 3%); }
+  90% { transform: translate(-4%, -2%); }
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    --header-height: 4.5rem;
+  }
+
+  html {
+    background: var(--color-cinema);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-apple);
+    color: var(--color-paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  .font-script {
+    font-family: var(--font-script);
+    letter-spacing: 0;
+  }
+
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  .section-pad {
+    padding-block: clamp(3.5rem, 8vw, 6rem);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 2.25rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  .display-xl {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 9vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+  }
+
+  .display-lg {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+    line-height: 1;
+  }
+
+  .display-md {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    line-height: 1.05;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.95rem 1.6rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    border-radius: 999px;
+    transition: transform 200ms ease, background-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
+    will-change: transform;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-primary {
+    background: var(--color-apple);
+    color: var(--color-paper);
+    box-shadow: 0 12px 30px -10px rgba(200, 16, 46, 0.65);
+  }
+  .btn-primary:hover { background: var(--color-apple-soft); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-paper);
+    border: 1px solid color-mix(in srgb, var(--color-paper) 35%, transparent);
+    backdrop-filter: blur(8px);
+  }
+  .btn-ghost:hover { border-color: var(--color-gold); color: var(--color-gold); }
+
+  .btn-whatsapp {
+    background: #25d366;
+    color: #052e16;
+  }
+  .btn-whatsapp:hover { background: #1fb558; }
+
+  .card {
+    background: linear-gradient(160deg, color-mix(in srgb, var(--color-paper) 6%, transparent), color-mix(in srgb, var(--color-paper) 2%, transparent));
+    border: 1px solid color-mix(in srgb, var(--color-paper) 12%, transparent);
+    border-radius: var(--radius-card);
+    backdrop-filter: blur(10px);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.4'/></svg>");
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    animation: var(--animate-grain);
+  }
+
+  .divider-script {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--color-gold);
+  }
+  .divider-script::before,
+  .divider-script::after {
+    content: "";
+    flex: 1;
+    max-width: 6rem;
+    height: 1px;
+    background: linear-gradient(to right, transparent, currentColor, transparent);
+    opacity: 0.6;
+  }
+}

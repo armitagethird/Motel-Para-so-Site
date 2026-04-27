@@ -1,0 +1,157 @@
+---
+import { motel } from "~/data/motel";
+
+const embedSrc = `https://www.google.com/maps?q=${encodeURIComponent(
+  `${motel.address.street}, ${motel.address.number}, ${motel.address.neighborhood}, ${motel.address.city} - ${motel.address.state}`
+)}&output=embed`;
+
+const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+  `${motel.name}, ${motel.address.street}, ${motel.address.number}, ${motel.address.neighborhood}, ${motel.address.city}, ${motel.address.state}`
+)}`;
+---
+
+<section id="localizacao" class="section-pad bg-cinema relative">
+  <div class="container-page">
+    <div class="grid lg:grid-cols-[1.4fr_1fr] gap-8 lg:gap-12 items-start">
+      <div class="reveal order-2 lg:order-1">
+        <div
+          class="relative w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto lg:h-[600px] rounded-2xl overflow-hidden ring-1 ring-paper/10 bg-cinema-soft"
+          data-map-container
+        >
+          <!-- Loading placeholder while iframe is not yet inserted -->
+          <div
+            class="absolute inset-0 grid place-items-center text-paper/50 text-sm"
+            data-map-placeholder
+          >
+            <div class="flex flex-col items-center gap-3">
+              <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                <path d="M16 28s10-9.5 10-17a10 10 0 1 0-20 0c0 7.5 10 17 10 17Z"/>
+                <circle cx="16" cy="11" r="3.5"/>
+              </svg>
+              <span>Carregando mapa…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-1 lg:order-2">
+        <div class="reveal">
+          <span class="eyebrow">Localização</span>
+          <h2 class="display-lg mt-6 text-paper">
+            Fácil de chegar,
+            <span class="font-script text-apple block normal-case mt-1">discreto pra ficar.</span>
+          </h2>
+        </div>
+
+        <div class="mt-8 card p-6 md:p-7 reveal" style="transition-delay: 80ms">
+          <div class="flex items-start gap-4">
+            <div class="size-12 rounded-2xl bg-apple/15 ring-1 ring-apple/30 grid place-items-center text-apple shrink-0">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 22s8-7.5 8-13a8 8 0 1 0-16 0c0 5.5 8 13 8 13Z"/>
+                <circle cx="12" cy="9" r="3"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-[11px] uppercase tracking-[0.28em] text-paper/55">Endereço</p>
+              <p class="mt-1 text-paper text-base md:text-lg leading-relaxed">
+                {motel.address.street}, {motel.address.number}<br/>
+                {motel.address.neighborhood}, {motel.address.city} — {motel.address.state}
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <a
+              href={directions}
+              target="_blank"
+              rel="noopener"
+              class="btn btn-primary text-sm py-3 px-4"
+            >
+              Como chegar
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </a>
+            <button
+              type="button"
+              class="btn btn-ghost text-sm py-3 px-4"
+              data-copy-address
+              data-address={`${motel.address.street}, ${motel.address.number}, ${motel.address.neighborhood}, ${motel.address.city} — ${motel.address.state}`}
+            >
+              <span data-copy-label>Copiar endereço</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="9" y="9" width="11" height="11" rx="2"/>
+                <path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-5 flex items-center gap-3 text-sm text-paper/65 reveal" style="transition-delay: 160ms">
+          <span class="size-1.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+          {motel.hours.display}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ embedSrc }}>
+  // Lazy-load Google Maps iframe only when the section is near the viewport.
+  const container = document.querySelector("[data-map-container]");
+  const placeholder = document.querySelector("[data-map-placeholder]");
+
+  const inject = () => {
+    if (!container || container.querySelector("iframe")) return;
+    const iframe = document.createElement("iframe");
+    iframe.src = embedSrc;
+    iframe.title = "Mapa do Paraíso Motel — São Luís, MA";
+    iframe.loading = "lazy";
+    iframe.referrerPolicy = "no-referrer-when-downgrade";
+    iframe.allowFullscreen = true;
+    iframe.style.cssText = "position:absolute;inset:0;width:100%;height:100%;border:0;background:#14110e;";
+    iframe.addEventListener("load", () => placeholder?.remove());
+    container.appendChild(iframe);
+  };
+
+  if (container && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            inject();
+            io.disconnect();
+            break;
+          }
+        }
+      },
+      { rootMargin: "200px 0px" }
+    );
+    io.observe(container);
+  } else {
+    inject();
+  }
+
+  // Copy address button
+  const copyBtn = document.querySelector("[data-copy-address]");
+  const copyLabel = document.querySelector("[data-copy-label]");
+  copyBtn?.addEventListener("click", async () => {
+    const addr = copyBtn.getAttribute("data-address") || "";
+    try {
+      await navigator.clipboard.writeText(addr);
+      const original = copyLabel?.textContent || "Copiar endereço";
+      if (copyLabel) copyLabel.textContent = "Copiado!";
+      setTimeout(() => { if (copyLabel) copyLabel.textContent = original; }, 1800);
+    } catch {
+      // Silent failure — fall back to selection.
+      const range = document.createRange();
+      const span = document.createElement("span");
+      span.textContent = addr;
+      document.body.appendChild(span);
+      range.selectNodeContents(span);
+      const sel = window.getSelection();
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    }
+  });
+</script>

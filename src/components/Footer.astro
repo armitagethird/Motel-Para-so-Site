@@ -1,0 +1,42 @@
+---
+import { motel } from "~/data/motel";
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-cinema-soft border-t border-paper/5">
+  <div class="container-page py-10 md:py-12">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-sm text-paper/60">
+      <div class="flex items-center gap-3">
+        <picture>
+          <source type="image/webp" srcset="/media/logo-320.webp" />
+          <img
+            src="/media/logo.png"
+            alt={`Logo ${motel.name}`}
+            width="40"
+            height="40"
+            class="size-10 rounded-full ring-1 ring-white/10"
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
+        <div>
+          <div class="font-display text-lg tracking-wider text-paper leading-none">PARAÍSO</div>
+          <div class="font-script text-apple -mt-0.5 leading-none">Motel</div>
+        </div>
+      </div>
+
+      <ul class="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <li><a href="#suites" class="hover:text-paper">Suítes</a></li>
+        <li><a href="#precos" class="hover:text-paper">Preços</a></li>
+        <li><a href="#cardapio" class="hover:text-paper">Cardápio</a></li>
+        <li><a href="#localizacao" class="hover:text-paper">Localização</a></li>
+        <li><a href={motel.contact.instagramUrl} target="_blank" rel="noopener" class="hover:text-paper">Instagram</a></li>
+      </ul>
+    </div>
+
+    <div class="mt-8 pt-6 border-t border-paper/5 flex flex-col md:flex-row gap-2 md:items-center md:justify-between text-xs text-paper/45">
+      <p>© {year} {motel.name}. Todos os direitos reservados.</p>
+      <p>{motel.address.full}</p>
+    </div>
+  </div>
+</footer>

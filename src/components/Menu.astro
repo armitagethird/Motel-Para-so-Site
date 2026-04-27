@@ -1,0 +1,100 @@
+---
+import { motel, formatBRL } from "~/data/motel";
+---
+
+<section id="cardapio" class="section-pad bg-cinema-soft relative">
+  <div class="container-page">
+    <div class="text-center max-w-2xl mx-auto reveal">
+      <span class="eyebrow">Cardápio</span>
+      <h2 class="display-lg mt-6 text-paper">
+        Tudo que você precisa,
+        <span class="font-script text-apple block normal-case mt-1">na porta do quarto.</span>
+      </h2>
+      <p class="mt-5 text-paper/75 text-pretty leading-relaxed">
+        Comida boa, bebida gelada e tudo mais que falta.
+      </p>
+    </div>
+
+    <div class="mt-12 max-w-4xl mx-auto reveal">
+      <!-- Tablist -->
+      <div role="tablist" aria-label="Categorias do cardápio" class="flex flex-wrap gap-2 mb-6">
+        {motel.menu.map((g, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`tab-${g.id}`}
+            aria-controls={`panel-${g.id}`}
+            aria-selected={i === 0 ? "true" : "false"}
+            tabindex={i === 0 ? "0" : "-1"}
+            class:list={[
+              "px-4 py-2.5 rounded-full text-sm font-medium transition-colors",
+              "ring-1 ring-paper/10",
+              i === 0 ? "bg-paper text-cinema" : "bg-paper/5 text-paper/80 hover:bg-paper/10",
+            ]}
+            data-tab
+          >
+            {g.name}
+          </button>
+        ))}
+      </div>
+
+      <!-- Panels -->
+      {motel.menu.map((g, i) => (
+        <div
+          role="tabpanel"
+          id={`panel-${g.id}`}
+          aria-labelledby={`tab-${g.id}`}
+          hidden={i !== 0}
+          class="card p-2 md:p-3"
+        >
+          <ul class="divide-y divide-paper/5">
+            {g.items.map((item) => (
+              <li class="flex items-baseline justify-between gap-4 px-4 md:px-5 py-3.5">
+                <span class="text-paper/90 text-sm md:text-base flex-1 min-w-0">{item.name}</span>
+                <span aria-hidden="true" class="flex-1 border-b border-dotted border-paper/15 mb-1 hidden sm:block"></span>
+                <span class="font-display text-lg md:text-xl text-gold tabular-nums shrink-0">{formatBRL(item.price)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <p class="mt-6 text-center text-sm text-paper/55 reveal">
+      Pedidos pelo telefone interno do quarto. Bom apetite.
+    </p>
+  </div>
+</section>
+
+<script>
+  // Accessible tabs (keyboard arrows + Home/End).
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('#cardapio [role="tab"]'));
+  const panels = tabs.map((t) => document.getElementById(t.getAttribute("aria-controls") || "")) as HTMLElement[];
+
+  const select = (idx: number) => {
+    tabs.forEach((t, i) => {
+      const selected = i === idx;
+      t.setAttribute("aria-selected", String(selected));
+      t.tabIndex = selected ? 0 : -1;
+      t.classList.toggle("bg-paper", selected);
+      t.classList.toggle("text-cinema", selected);
+      t.classList.toggle("bg-paper/5", !selected);
+      t.classList.toggle("text-paper/80", !selected);
+      panels[i].hidden = !selected;
+    });
+    tabs[idx].focus();
+  };
+
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", () => select(i));
+    t.addEventListener("keydown", (e) => {
+      const last = tabs.length - 1;
+      switch (e.key) {
+        case "ArrowRight": e.preventDefault(); select(i === last ? 0 : i + 1); break;
+        case "ArrowLeft":  e.preventDefault(); select(i === 0 ? last : i - 1); break;
+        case "Home":       e.preventDefault(); select(0); break;
+        case "End":        e.preventDefault(); select(last); break;
+      }
+    });
+  });
+</script>

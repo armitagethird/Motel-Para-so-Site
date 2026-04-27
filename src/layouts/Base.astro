@@ -1,0 +1,167 @@
+---
+import "../styles/global.css";
+import { motel } from "~/data/motel";
+
+interface Props {
+  title?: string;
+  description?: string;
+  pathname?: string;
+}
+
+const {
+  title = motel.seo.title,
+  description = motel.seo.description,
+  pathname = "/",
+} = Astro.props;
+
+const canonical = new URL(pathname, motel.seo.siteUrl).toString();
+const ogImage = new URL(motel.seo.ogImage, motel.seo.siteUrl).toString();
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": ["LodgingBusiness", "Motel"],
+  name: motel.name,
+  description: motel.description,
+  url: motel.seo.siteUrl,
+  image: [ogImage, new URL("/media/logo-1280.webp", motel.seo.siteUrl).toString()],
+  logo: new URL("/media/logo-640.webp", motel.seo.siteUrl).toString(),
+  telephone: motel.contact.phone,
+  priceRange: "R$ 40 - R$ 90",
+  currenciesAccepted: "BRL",
+  paymentAccepted: motel.payment.methods.join(", ") + ", " + motel.payment.terminal,
+  numberOfRooms: motel.suites.reduce((sum, s) => sum + s.units, 0),
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: `${motel.address.street}, ${motel.address.number}`,
+    addressLocality: motel.address.city,
+    addressRegion: motel.address.state,
+    addressCountry: motel.address.country,
+    streetAddressLocality: motel.address.neighborhood,
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: motel.geo.lat,
+    longitude: motel.geo.lng,
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      opens: "00:00",
+      closes: "23:59",
+    },
+  ],
+  sameAs: [motel.contact.instagramUrl],
+  amenityFeature: [
+    { "@type": "LocationFeatureSpecification", name: "Aberto 24 horas", value: true },
+    { "@type": "LocationFeatureSpecification", name: "Estacionamento privativo", value: true },
+    { "@type": "LocationFeatureSpecification", name: "Hidromassagem (suítes selecionadas)", value: true },
+    { "@type": "LocationFeatureSpecification", name: "Ar condicionado", value: true },
+    { "@type": "LocationFeatureSpecification", name: "TV", value: true },
+    { "@type": "LocationFeatureSpecification", name: "Frigobar", value: true },
+  ],
+  hasMap: motel.maps.shareUrl,
+  potentialAction: {
+    "@type": "ReserveAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `https://wa.me/${motel.contact.whatsapp}`,
+      actionPlatform: ["http://schema.org/MobileWebPlatform", "http://schema.org/DesktopWebPlatform"],
+    },
+    result: { "@type": "LodgingReservation", name: "Reserva pelo WhatsApp" },
+  },
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={motel.seo.keywords.join(", ")} />
+    <meta name="author" content={motel.name} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Locale & geo -->
+    <meta name="language" content="Portuguese" />
+    <meta name="geo.region" content={motel.geo.region} />
+    <meta name="geo.placename" content={motel.geo.placename} />
+    <meta name="geo.position" content={`${motel.geo.lat};${motel.geo.lng}`} />
+    <meta name="ICBM" content={motel.geo.icbm} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={motel.name} />
+    <meta property="og:locale" content={motel.seo.locale} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`Logo do ${motel.name}`} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Theme & PWA -->
+    <meta name="theme-color" content={motel.seo.themeColor} />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content={motel.name} />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- Favicons -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Performance hints -->
+    <link rel="preconnect" href="https://www.google.com" />
+    <link rel="dns-prefetch" href="https://maps.google.com" />
+    <link rel="preload" href="/media/hero-poster.webp" as="image" type="image/webp" />
+    <link rel="preload" href="/media/logo-640.webp" as="image" type="image/webp" />
+
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- JSON-LD: Schema.org LodgingBusiness/Motel -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+
+  <body>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-paper focus:text-cinema focus:px-4 focus:py-2 focus:rounded-full focus:font-semibold">
+      Pular para o conteúdo
+    </a>
+    <slot />
+
+    <script>
+      // Lightweight scroll-reveal using IntersectionObserver. Zero dependencies.
+      const els = document.querySelectorAll(".reveal");
+      if (els.length && "IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("in");
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+        );
+        els.forEach((el) => io.observe(el));
+      } else {
+        els.forEach((el) => el.classList.add("in"));
+      }
+    </script>
+  </body>
+</html>

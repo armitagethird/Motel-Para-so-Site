@@ -1,0 +1,28 @@
+---
+import { motel } from "~/data/motel";
+
+// Simple uniform "chips" for payment methods. Avoids brand SVG assets and stays light.
+const all = [...motel.payment.methods, motel.payment.terminal];
+---
+
+<section class="section-pad pt-0 bg-cinema-soft relative">
+  <div class="container-page">
+    <div class="card p-8 md:p-10 reveal">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <span class="eyebrow">Formas de Pagamento</span>
+          <h3 class="display-md mt-4 text-paper">PIX e principais cartões</h3>
+          <p class="mt-2 text-paper/70 max-w-md text-pretty">{motel.payment.note}</p>
+        </div>
+
+        <ul class="flex flex-wrap gap-2 md:gap-2.5 md:justify-end max-w-xl">
+          {all.map((m) => (
+            <li class="px-3.5 py-2 rounded-full bg-paper/[0.06] ring-1 ring-paper/10 text-sm text-paper/85">
+              {m}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
