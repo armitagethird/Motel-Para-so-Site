@@ -22,12 +22,13 @@ export const motel = {
   address: {
     street: 'Rua Celso Magalhães',
     number: '02',
-    neighborhood: 'Felipinho',
+    neighborhood: 'Filipinho',
     city: 'São Luís',
     state: 'MA',
     stateName: 'Maranhão',
     country: 'BR',
-    full: 'Rua Celso Magalhães, 02 — Felipinho, São Luís — MA',
+    postalCode: '65041-820',
+    full: 'Rua Celso Magalhães, 02 — Filipinho, São Luís — MA, 65041-820',
   },
 
   // Google Maps Place ID derived from the share link the owner provided.
@@ -225,13 +226,13 @@ export const motel = {
     backgroundColor: '#F5E6CD',
   },
 
-  // Approximate coordinates for São Luís - MA. Refine when you have the exact lat/lng.
+  // Exact coordinates extracted from Google Maps for the building entrance.
   geo: {
-    lat: -2.5391,
-    lng: -44.2829,
+    lat: -2.5562859,
+    lng: -44.2663847,
     region: 'BR-MA',
     placename: 'São Luís',
-    icbm: '-2.5391, -44.2829',
+    icbm: '-2.5562859, -44.2663847',
   },
 } as const;
 

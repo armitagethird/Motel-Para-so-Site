@@ -1,13 +1,15 @@
 ---
 import { motel } from "~/data/motel";
 
-const embedSrc = `https://www.google.com/maps?q=${encodeURIComponent(
-  `${motel.address.street}, ${motel.address.number}, ${motel.address.neighborhood}, ${motel.address.city} - ${motel.address.state}`
-)}&output=embed`;
+// Use exact lat/lng for the embed pin so it lands on the building, not on
+// a fuzzy address-search result that can snap to the wrong side of the
+// street. The text query is still appended so the place name shows up
+// next to the marker.
+const embedSrc = `https://www.google.com/maps?q=${motel.geo.lat},${motel.geo.lng}+(${encodeURIComponent(motel.name)})&z=17&output=embed`;
 
-const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-  `${motel.name}, ${motel.address.street}, ${motel.address.number}, ${motel.address.neighborhood}, ${motel.address.city}, ${motel.address.state}`
-)}`;
+// "Get directions" deep-link uses the place name plus coordinates; this is
+// what natively opens in the Google Maps app on mobile when available.
+const directions = `https://www.google.com/maps/dir/?api=1&destination=${motel.geo.lat},${motel.geo.lng}&destination_place_id=&travelmode=driving`;
 ---
 
 <section id="localizacao" class="section-pad bg-cinema relative lazy-section">
@@ -55,7 +57,8 @@ const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
               <p class="text-[11px] uppercase tracking-[0.28em] text-paper/55">Endereço</p>
               <p class="mt-1 text-paper text-base md:text-lg leading-relaxed">
                 {motel.address.street}, {motel.address.number}<br/>
-                {motel.address.neighborhood}, {motel.address.city} — {motel.address.state}
+                {motel.address.neighborhood}, {motel.address.city} — {motel.address.state}<br/>
+                <span class="text-paper/65 text-sm">CEP {motel.address.postalCode}</span>
               </p>
             </div>
           </div>
