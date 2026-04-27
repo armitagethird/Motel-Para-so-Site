@@ -17,19 +17,34 @@ const {
 const canonical = new URL(pathname, motel.seo.siteUrl).toString();
 const ogImage = new URL(motel.seo.ogImage, motel.seo.siteUrl).toString();
 
-const jsonLd = {
+const lodgingLd = {
   "@context": "https://schema.org",
   "@type": ["LodgingBusiness", "Motel"],
+  "@id": `${motel.seo.siteUrl}/#business`,
   name: motel.name,
+  alternateName: ["Motel Paraíso", "Paraíso Motel São Luís"],
   description: motel.description,
+  slogan: motel.seo.slogan,
   url: motel.seo.siteUrl,
-  image: [ogImage, new URL("/media/logo-1280.webp", motel.seo.siteUrl).toString()],
+  image: [
+    ogImage,
+    new URL("/media/logo-1280.webp", motel.seo.siteUrl).toString(),
+    new URL("/media/hero-poster.webp", motel.seo.siteUrl).toString(),
+  ],
   logo: new URL("/media/logo-640.webp", motel.seo.siteUrl).toString(),
   telephone: motel.contact.phone,
   priceRange: "R$ 40 - R$ 90",
   currenciesAccepted: "BRL",
   paymentAccepted: motel.payment.methods.join(", ") + ", " + motel.payment.terminal,
   numberOfRooms: motel.suites.reduce((sum, s) => sum + s.units, 0),
+  knowsLanguage: ["pt-BR"],
+  knowsAbout: [
+    "motel são luís",
+    "hospedagem por hora",
+    "suítes com hidromassagem",
+    "pernoite",
+    "motel 24 horas",
+  ],
   address: {
     "@type": "PostalAddress",
     streetAddress: `${motel.address.street}, ${motel.address.number}`,
@@ -44,6 +59,32 @@ const jsonLd = {
     latitude: motel.geo.lat,
     longitude: motel.geo.lng,
   },
+  // Tells search engines we serve customers from the entire municipality
+  // and the broader metropolitan region, not just the immediate street.
+  areaServed: [
+    {
+      "@type": "City",
+      name: "São Luís",
+      sameAs: "https://pt.wikipedia.org/wiki/São_Luís_(Maranhão)",
+      containedInPlace: {
+        "@type": "AdministrativeArea",
+        name: "Maranhão",
+        sameAs: "https://pt.wikipedia.org/wiki/Maranhão",
+      },
+    },
+    { "@type": "City", name: "São José de Ribamar" },
+    { "@type": "City", name: "Paço do Lumiar" },
+    { "@type": "City", name: "Raposa" },
+  ],
+  serviceArea: {
+    "@type": "GeoCircle",
+    geoMidpoint: {
+      "@type": "GeoCoordinates",
+      latitude: motel.geo.lat,
+      longitude: motel.geo.lng,
+    },
+    geoRadius: "30000", // 30 km — covers the Grande São Luís
+  },
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
@@ -56,10 +97,21 @@ const jsonLd = {
   amenityFeature: [
     { "@type": "LocationFeatureSpecification", name: "Aberto 24 horas", value: true },
     { "@type": "LocationFeatureSpecification", name: "Estacionamento privativo", value: true },
-    { "@type": "LocationFeatureSpecification", name: "Hidromassagem (suítes selecionadas)", value: true },
+    { "@type": "LocationFeatureSpecification", name: "Hidromassagem (suítes Super Luxo)", value: true },
+    { "@type": "LocationFeatureSpecification", name: "Pole dance (suíte Super Luxo 7)", value: true },
+    { "@type": "LocationFeatureSpecification", name: "Espelho no teto (Luxo e Super Luxo)", value: true },
+    { "@type": "LocationFeatureSpecification", name: "Sofá erótico (Super Luxo)", value: true },
+    { "@type": "LocationFeatureSpecification", name: "Cadeira erótica (Luxo)", value: true },
     { "@type": "LocationFeatureSpecification", name: "Ar condicionado", value: true },
     { "@type": "LocationFeatureSpecification", name: "TV", value: true },
     { "@type": "LocationFeatureSpecification", name: "Frigobar", value: true },
+    { "@type": "LocationFeatureSpecification", name: "Cardápio no quarto", value: true },
+    { "@type": "LocationFeatureSpecification", name: "Privacidade total", value: true },
+  ],
+  additionalProperty: [
+    { "@type": "PropertyValue", name: "Pagamento via PIX", value: "Sim" },
+    { "@type": "PropertyValue", name: "Pernoite", value: "00h00 às 06h00 — R$ 90,00" },
+    { "@type": "PropertyValue", name: "Estadia mínima", value: "2 horas — R$ 40,00" },
   ],
   hasMap: motel.maps.shareUrl,
   potentialAction: {
@@ -71,6 +123,29 @@ const jsonLd = {
     },
     result: { "@type": "LodgingReservation", name: "Reserva pelo WhatsApp" },
   },
+};
+
+// FAQPage schema — eligible for rich snippets in Google SERPs.
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": `${motel.seo.siteUrl}/#faq`,
+  mainEntity: motel.faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
+// WebSite schema — strengthens brand recognition and enables sitelinks.
+const websiteLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${motel.seo.siteUrl}/#website`,
+  url: motel.seo.siteUrl,
+  name: motel.name,
+  inLanguage: "pt-BR",
+  publisher: { "@id": `${motel.seo.siteUrl}/#business` },
 };
 ---
 
@@ -97,7 +172,7 @@ const jsonLd = {
     <meta name="ICBM" content={motel.geo.icbm} />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="business.business" />
     <meta property="og:site_name" content={motel.name} />
     <meta property="og:locale" content={motel.seo.locale} />
     <meta property="og:title" content={title} />
@@ -107,6 +182,16 @@ const jsonLd = {
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={`Logo do ${motel.name}`} />
+    <!-- Place metadata for richer Facebook/LinkedIn cards -->
+    <meta property="business:contact_data:street_address" content={`${motel.address.street}, ${motel.address.number}`} />
+    <meta property="business:contact_data:locality" content={motel.address.city} />
+    <meta property="business:contact_data:region" content={motel.address.stateName} />
+    <meta property="business:contact_data:postal_code" content={motel.address.postalCode} />
+    <meta property="business:contact_data:country_name" content="Brasil" />
+    <meta property="business:contact_data:phone_number" content={motel.contact.phone} />
+    <meta property="business:contact_data:website" content={motel.seo.siteUrl} />
+    <meta property="place:location:latitude" content={String(motel.geo.lat)} />
+    <meta property="place:location:longitude" content={String(motel.geo.lng)} />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -134,8 +219,11 @@ const jsonLd = {
 
     <meta name="generator" content={Astro.generator} />
 
-    <!-- JSON-LD: Schema.org LodgingBusiness/Motel -->
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <!-- JSON-LD: LodgingBusiness/Motel + WebSite + FAQPage. Three blocks
+         help Google build a richer Knowledge Graph entry. -->
+    <script type="application/ld+json" set:html={JSON.stringify(lodgingLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
   </head>
 
   <body>

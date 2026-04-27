@@ -208,23 +208,73 @@ export const motel = {
   // Used for SEO / JSON-LD
   seo: {
     siteUrl: 'https://paraisomotel.com.br',
-    title: 'Paraíso Motel — Conforto e Privacidade em São Luís | 16 Suítes 24h',
+    // Title front-loads the primary local query "Motel em São Luís".
+    // Length kept under ~62 chars so Google doesn't truncate.
+    title: 'Motel em São Luís - MA | Paraíso Motel — 24h, Hidromassagem',
+    // Description leads with the high-intent local query and packs the
+    // amenities people actually search for, plus a clear price anchor.
     description:
-      'Paraíso Motel em São Luís - MA. 16 suítes (Simples, Luxo e Super Luxo) com hidromassagem, espelho no teto e privacidade total. Aberto 24 horas. Pernoite R$ 90. Reserve pelo WhatsApp.',
+      'Motel em São Luís - MA. Paraíso Motel: 16 suítes 24h, hidromassagem, espelho no teto e sofá erótico. Pernoite R$ 90. Reserve agora pelo WhatsApp.',
+    // Keyword set covers brand + local intent + feature intent + variants.
+    // Ordered by descending search-volume guess.
     keywords: [
       'motel são luís',
-      'motel maranhão',
+      'motel em são luís',
+      'motel são luís ma',
+      'motel são luís maranhão',
       'paraíso motel',
+      'paraíso motel são luís',
       'motel 24 horas são luís',
-      'suíte com hidromassagem são luís',
-      'motel felipinho',
+      'motel barato são luís',
+      'motel com hidromassagem são luís',
+      'motel filipinho',
+      'motel com pole dance são luís',
+      'pernoite motel são luís',
+      'motéis são luís',
+      'motel ma',
+      'motel maranhão',
     ],
     ogImage: '/media/og-image.jpg',
     twitterImage: '/media/og-image.jpg',
     locale: 'pt_BR',
     themeColor: '#0A0A0A',
     backgroundColor: '#F5E6CD',
+    slogan: 'Seu paraíso particular em São Luís',
   },
+
+  // Frequently asked questions — rendered as a visible accordion AND
+  // emitted as FAQPage JSON-LD. Each Q/A repeats target keywords
+  // naturally for both readers and search engines.
+  faqs: [
+    {
+      q: 'Onde fica o Paraíso Motel em São Luís?',
+      a: 'O Paraíso Motel fica em São Luís - MA, no bairro Filipinho, na Rua Celso Magalhães, 02, CEP 65041-820. Atendemos toda a Grande São Luís com fácil acesso.',
+    },
+    {
+      q: 'O Paraíso Motel funciona 24 horas?',
+      a: 'Sim. O Paraíso Motel funciona 24 horas, todos os dias da semana. Você pode chegar a qualquer hora do dia ou da noite.',
+    },
+    {
+      q: 'Quanto custa o pernoite no Paraíso Motel?',
+      a: 'O pernoite (das 00h00 às 06h00) custa R$ 90,00 em todas as categorias de suíte. A estadia de 2 horas começa em R$ 40,00 na Suíte Simples.',
+    },
+    {
+      q: 'Quais formas de pagamento o Paraíso Motel aceita?',
+      a: 'Aceitamos PIX, Mastercard, Visa, Elo, American Express, Hipercard, Hiper e Diners Club. Operamos com maquininha Stone.',
+    },
+    {
+      q: 'O motel tem suíte com hidromassagem em São Luís?',
+      a: 'Sim. As suítes Super Luxo (quartos 8 e 9) do Paraíso Motel têm banheira de hidromassagem, espelho no teto e sofá erótico. O quarto 7 traz pole dance.',
+    },
+    {
+      q: 'Quantas suítes o Paraíso Motel tem?',
+      a: 'São 16 suítes no total, divididas em três categorias: 7 Simples (quartos 10 a 16), 6 Luxo (1 a 6) com espelho no teto e cadeira erótica, e 3 Super Luxo (7 a 9).',
+    },
+    {
+      q: 'Como reservar uma suíte no Paraíso Motel?',
+      a: 'Mande uma mensagem no WhatsApp (98) 98862-1245 e te respondemos em segundos com as suítes disponíveis. Sem cadastro, sem complicação.',
+    },
+  ],
 
   // Exact coordinates extracted from Google Maps for the building entrance.
   geo: {

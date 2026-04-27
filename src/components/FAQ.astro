@@ -1,0 +1,39 @@
+---
+import { motel } from "~/data/motel";
+---
+
+<section id="faq" class="section-pad bg-cinema relative">
+  <div class="container-page">
+    <div class="text-center max-w-2xl mx-auto reveal">
+      <span class="eyebrow">Perguntas Frequentes</span>
+      <h2 class="display-lg mt-6 text-paper">
+        Quem chega ao Paraíso
+        <span class="font-script text-apple block normal-case mt-1">geralmente quer saber:</span>
+      </h2>
+    </div>
+
+    <div class="mt-12 max-w-3xl mx-auto reveal">
+      {motel.faqs.map((faq, i) => (
+        <details class="group card mb-3 last:mb-0">
+          <summary class="cursor-pointer list-none flex items-center justify-between gap-4 px-5 md:px-6 py-4 md:py-5 text-paper text-base md:text-lg font-medium select-none">
+            <span class="flex-1 pr-4">{faq.q}</span>
+            <span class="size-7 rounded-full bg-paper/5 ring-1 ring-paper/10 grid place-items-center text-gold shrink-0 transition-transform group-open:rotate-45">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </span>
+          </summary>
+          <div class="px-5 md:px-6 pb-5 md:pb-6 text-paper/80 leading-relaxed text-pretty">
+            {faq.a}
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] > summary { color: var(--color-gold); }
+</style>
