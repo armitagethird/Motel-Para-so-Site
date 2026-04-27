@@ -7,35 +7,33 @@ import { motel, whatsappLink } from "~/data/motel";
   class="relative isolate min-h-[100dvh] flex items-center overflow-hidden"
   aria-labelledby="hero-title"
 >
-  <!-- Background video with blur -->
-  <div class="absolute inset-0 -z-10">
-    <div class="absolute -inset-8">
-      <video
-        class="size-full object-cover scale-105"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="metadata"
-        poster="/media/hero-poster.webp"
-        aria-hidden="true"
-        tabindex="-1"
-        disablepictureinpicture
-        disableremoteplayback
-        data-hero-video
-      >
-        <source src="/media/hero.webm" type="video/webm" />
-        <source src="/media/hero.mp4" type="video/mp4" />
-      </video>
-    </div>
-    <!-- Single calm dark wash + subtle vignette -->
-    <div class="absolute inset-0 bg-cinema/65"></div>
+  <!-- Background: pre-blurred poster (cheap), with the live video layered
+       on top only on larger screens where the GPU can keep up. -->
+  <div class="absolute inset-0 -z-10 bg-cinema">
+    <div class="hero-bg absolute inset-0"></div>
+    <video
+      class="hero-video absolute inset-0 size-full object-cover"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      poster="/media/hero-poster.webp"
+      aria-hidden="true"
+      tabindex="-1"
+      disablepictureinpicture
+      disableremoteplayback
+      data-hero-video
+    >
+      <source src="/media/hero.webm" type="video/webm" />
+      <source src="/media/hero.mp4" type="video/mp4" />
+    </video>
+    <div class="absolute inset-0 bg-cinema/55"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-cinema via-cinema/30 to-cinema/55"></div>
   </div>
 
   <div class="container-page relative w-full pt-[calc(var(--header-height)+1rem)] pb-32 md:pb-36">
     <div class="flex flex-col items-center text-center gap-8 md:gap-10 max-w-2xl mx-auto">
-      <!-- Logo -->
       <picture class="reveal">
         <source type="image/webp" srcset="/media/logo-320.webp 1x, /media/logo-640.webp 2x" />
         <img
@@ -43,14 +41,14 @@ import { motel, whatsappLink } from "~/data/motel";
           alt={`Logo ${motel.name}`}
           width="240"
           height="240"
-          class="block w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 object-contain drop-shadow-[0_18px_40px_rgba(0,0,0,0.55)]"
+          class="block w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 object-contain hero-logo-shadow"
           loading="eager"
           fetchpriority="high"
           decoding="async"
         />
       </picture>
 
-      <div class="flex flex-col items-center gap-4 reveal" style="transition-delay: 80ms">
+      <div class="flex flex-col items-center gap-4 reveal" style="transition-delay: 60ms">
         <span class="eyebrow text-paper/80">São Luís — Maranhão</span>
         <h1 id="hero-title" class="display-xl text-paper text-balance">
           Seu paraíso
@@ -61,7 +59,7 @@ import { motel, whatsappLink } from "~/data/motel";
         </p>
       </div>
 
-      <div class="flex flex-col sm:flex-row gap-3 reveal" style="transition-delay: 160ms">
+      <div class="flex flex-col sm:flex-row gap-3 reveal" style="transition-delay: 120ms">
         <a
           href={whatsappLink()}
           target="_blank"
@@ -89,7 +87,7 @@ import { motel, whatsappLink } from "~/data/motel";
       aria-label="Rolar para a próxima seção"
     >
       <span class="text-[10px] uppercase tracking-[0.32em]">Descer</span>
-      <svg width="20" height="22" viewBox="0 0 20 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="animate-[bounce-down_1.8s_ease-in-out_infinite]" aria-hidden="true">
+      <svg width="20" height="22" viewBox="0 0 20 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="hero-arrow" aria-hidden="true">
         <line x1="10" y1="2" x2="10" y2="18"/>
         <polyline points="3 12 10 19 17 12"/>
       </svg>
@@ -98,27 +96,51 @@ import { motel, whatsappLink } from "~/data/motel";
 </section>
 
 <style>
-  /* Blur the video itself; overscale prevents blur edges from showing. */
-  [data-hero-video] {
-    filter: blur(14px) saturate(115%) brightness(0.85);
-    transform: scale(1.06);
-    transform-origin: center;
+  /* Mobile-first: cheap pre-blurred image as background, no live video. */
+  .hero-bg {
+    background-image: url("/media/hero-poster-blur.webp");
+    background-size: cover;
+    background-position: center;
   }
+  .hero-video { display: none; }
+
+  /* Cheaper shadow than `drop-shadow-[0_18px_40px_rgba(0,0,0,0.55)]` —
+     a tinted radial fade behind the logo, painted once. */
+  .hero-logo-shadow {
+    filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.45));
+  }
+
+  /* Bouncing arrow only animates on devices with a mouse; saves a constant
+     animation cycle on phones. */
+  @media (hover: hover) and (pointer: fine) {
+    .hero-arrow {
+      animation: bounce-down 1.8s ease-in-out infinite;
+    }
+  }
+
+  /* Desktop-only: show the live video on top of the blurred bg. The video
+     is no longer CSS-blurred — the blurred poster behind it provides the
+     ambience. The video itself stays visually similar via the dark wash. */
+  @media (min-width: 1024px) {
+    .hero-video { display: block; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    [data-hero-video] { filter: blur(8px) brightness(0.85); }
+    .hero-video { display: none !important; }
   }
 </style>
 
 <script>
-  // Respect reduced-motion: pause the autoplay video.
   const video = document.querySelector<HTMLVideoElement>("[data-hero-video]");
   if (video) {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const desktop = window.matchMedia("(min-width: 1024px)").matches;
+    if (reduce || !desktop) {
+      // Keep the DOM but never load the source on mobile/reduced-motion.
       video.removeAttribute("autoplay");
       video.pause();
-    }
-    if ("IntersectionObserver" in window) {
+      video.removeAttribute("preload");
+    } else if ("IntersectionObserver" in window) {
       const io = new IntersectionObserver(
         (entries) => {
           for (const e of entries) {

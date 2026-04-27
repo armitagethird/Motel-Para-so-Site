@@ -140,15 +140,28 @@ async function processVideo() {
   ], 'poster frame');
 
   await sharp(posterRaw).webp({ quality: 80, effort: 6 }).toFile(posterOut);
+
+  // Pre-blurred low-res variant for mobile background — replaces a runtime
+  // CSS filter: blur on a <video>, which is brutal on mobile GPUs.
+  const posterBlurOut = join(OUT, 'hero-poster-blur.webp');
+  await sharp(posterRaw)
+    .resize({ width: 1024 })
+    .blur(40)
+    .modulate({ brightness: 0.85, saturation: 1.1 })
+    .webp({ quality: 65, effort: 6 })
+    .toFile(posterBlurOut);
+
   await rm(posterRaw, { force: true });
 
   const mp4Size = await size(mp4Out);
   const webmSize = await size(webmOut);
   const posterSize = await size(posterOut);
 
-  console.log(`  hero.mp4         -> ${fmtMB(mp4Size)}`);
-  console.log(`  hero.webm        -> ${fmtMB(webmSize)}`);
-  console.log(`  hero-poster.webp -> ${fmtKB(posterSize)}`);
+  const posterBlurSize = await size(posterBlurOut);
+  console.log(`  hero.mp4              -> ${fmtMB(mp4Size)}`);
+  console.log(`  hero.webm             -> ${fmtMB(webmSize)}`);
+  console.log(`  hero-poster.webp      -> ${fmtKB(posterSize)}`);
+  console.log(`  hero-poster-blur.webp -> ${fmtKB(posterBlurSize)} (mobile bg)`);
   console.log(`[hero] in ${fmtMB(inputSize)} -> out ${fmtMB(mp4Size + webmSize + posterSize)} (${((1 - (mp4Size + webmSize + posterSize) / inputSize) * 100).toFixed(0)}% smaller)`);
 }
 

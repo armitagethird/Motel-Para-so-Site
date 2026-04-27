@@ -1,11 +1,12 @@
 @import "tailwindcss";
 
+/* Body weights kept minimal: 400 for prose, 600 for emphasis. Display fonts
+   only need a single weight each. Cuts ~60% of font payload. */
 @import "@fontsource/bebas-neue/400.css";
 @import "@fontsource/allura/400.css";
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/500.css";
 @import "@fontsource/inter/600.css";
-@import "@fontsource/inter/700.css";
 
 @theme {
   --color-paper: #f5e6cd;
@@ -23,38 +24,20 @@
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --spacing-section: 6rem;
-
   --radius-card: 1.25rem;
-
-  --animate-pulse-soft: pulse-soft 2.5s ease-in-out infinite;
-  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-bounce-down: bounce-down 1.8s ease-in-out infinite;
-  --animate-grain: grain 8s steps(8) infinite;
 }
 
 @keyframes pulse-soft {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55); }
-  70% { box-shadow: 0 0 0 18px rgba(37, 211, 102, 0); }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
 }
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 @keyframes bounce-down {
-  0%, 100% { transform: translateY(0); opacity: 0.6; }
-  50% { transform: translateY(8px); opacity: 1; }
-}
-@keyframes grain {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-3%, -2%); }
-  20% { transform: translate(2%, 4%); }
-  30% { transform: translate(-4%, 2%); }
-  40% { transform: translate(3%, -3%); }
-  50% { transform: translate(-2%, 5%); }
-  60% { transform: translate(4%, 0); }
-  70% { transform: translate(-3%, -4%); }
-  80% { transform: translate(2%, 3%); }
-  90% { transform: translate(-4%, -2%); }
+  0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.6; }
+  50%      { transform: translate3d(0, 8px, 0); opacity: 1; }
 }
 
 @layer base {
@@ -100,7 +83,7 @@
   }
 
   .text-balance { text-wrap: balance; }
-  .text-pretty { text-wrap: pretty; }
+  .text-pretty  { text-wrap: pretty; }
 
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -124,6 +107,14 @@
 
   .section-pad {
     padding-block: clamp(3.5rem, 8vw, 6rem);
+  }
+
+  /* Sections below the fold opt into render-skipping when offscreen.
+     Modern browsers skip layout/paint work for these blocks until they
+     approach the viewport — biggest single win on long mobile scrolls. */
+  .lazy-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 800px;
   }
 
   .eyebrow {
@@ -151,13 +142,11 @@
     line-height: 0.95;
     letter-spacing: 0.01em;
   }
-
   .display-lg {
     font-family: var(--font-display);
     font-size: clamp(2.25rem, 6vw, 4.5rem);
     line-height: 1;
   }
-
   .display-md {
     font-family: var(--font-display);
     font-size: clamp(1.75rem, 4vw, 3rem);
@@ -174,64 +163,52 @@
     font-size: 0.95rem;
     letter-spacing: 0.04em;
     border-radius: 999px;
-    transition: transform 200ms ease, background-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
-    will-change: transform;
+    transition: transform 200ms ease, background-color 200ms ease, color 200ms ease, border-color 200ms ease;
   }
-  .btn:hover { transform: translateY(-2px); }
-  .btn:active { transform: translateY(0); }
+  .btn:hover  { transform: translate3d(0, -2px, 0); }
+  .btn:active { transform: translate3d(0, 0, 0); }
 
   .btn-primary {
     background: var(--color-apple);
     color: var(--color-paper);
-    box-shadow: 0 12px 30px -10px rgba(200, 16, 46, 0.65);
+    box-shadow: 0 6px 18px -8px rgba(200, 16, 46, 0.55);
   }
   .btn-primary:hover { background: var(--color-apple-soft); }
 
   .btn-ghost {
-    background: transparent;
+    background: rgba(245, 230, 205, 0.04);
     color: var(--color-paper);
-    border: 1px solid color-mix(in srgb, var(--color-paper) 35%, transparent);
-    backdrop-filter: blur(8px);
+    border: 1px solid rgba(245, 230, 205, 0.25);
   }
   .btn-ghost:hover { border-color: var(--color-gold); color: var(--color-gold); }
 
-  .btn-whatsapp {
-    background: #25d366;
-    color: #052e16;
-  }
+  .btn-whatsapp { background: #25d366; color: #052e16; }
   .btn-whatsapp:hover { background: #1fb558; }
 
+  /* Solid translucent surface — no backdrop-filter. Visually nearly
+     identical on a dark theme, costs zero per-frame GPU work. */
   .card {
-    background: linear-gradient(160deg, color-mix(in srgb, var(--color-paper) 6%, transparent), color-mix(in srgb, var(--color-paper) 2%, transparent));
-    border: 1px solid color-mix(in srgb, var(--color-paper) 12%, transparent);
+    background: linear-gradient(160deg, rgba(245, 230, 205, 0.05), rgba(245, 230, 205, 0.02));
+    border: 1px solid rgba(245, 230, 205, 0.1);
     border-radius: var(--radius-card);
-    backdrop-filter: blur(10px);
   }
 
+  /* Reveal — opacity-only on touch devices (cheap), opacity+translate on
+     pointer devices. Drops will-change entirely; translate3d alone is
+     enough to land on the compositor without the memory cost. */
   .reveal {
     opacity: 0;
-    transform: translate3d(0, 14px, 0);
-    transition: opacity 520ms cubic-bezier(0.22, 1, 0.36, 1), transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: opacity, transform;
+    transition: opacity 360ms ease-out;
   }
-  .reveal.in {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-  /* Once revealed, drop the will-change hint to free GPU memory. */
-  .reveal.in {
-    will-change: auto;
-  }
+  .reveal.in { opacity: 1; }
 
-  .grain::after {
-    content: "";
-    position: absolute;
-    inset: -50%;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.4'/></svg>");
-    opacity: 0.06;
-    mix-blend-mode: overlay;
-    animation: var(--animate-grain);
+  @media (hover: hover) and (pointer: fine) {
+    .reveal {
+      transform: translate3d(0, 12px, 0);
+      transition: opacity 480ms cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.in { transform: translate3d(0, 0, 0); }
   }
 
   .divider-script {

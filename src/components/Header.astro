@@ -133,10 +133,10 @@ const links = [
   header {
     background: transparent;
   }
+  /* Solid translucent fill — drops backdrop-filter, which is the single
+     most expensive thing a fixed scroll-pinned element can do on iOS. */
   header.scrolled {
-    background: color-mix(in srgb, var(--color-cinema) 78%, transparent);
-    backdrop-filter: blur(14px) saturate(160%);
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    background: rgba(10, 10, 10, 0.92);
     box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04);
   }
 </style>
