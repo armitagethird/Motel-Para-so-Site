@@ -65,6 +65,14 @@ export const motel = {
       price2h: 40,
       priceOvernight: 90,
       placeholderHue: 32,
+      description:
+        'O essencial, muito bem feito. As 7 suítes da categoria Simples ocupam os quartos 10 a 16 e trazem tudo que você precisa para um bom momento: cama de casal espaçosa, banheiro privativo, ar condicionado, TV e frigobar. Funcional, confortável e direto ao ponto.',
+      highlights: [
+        '7 unidades disponíveis',
+        'Cama de casal espaçosa',
+        'Banheiro privativo, ar e TV',
+      ],
+      photoCount: 4,
     },
     {
       id: 'luxo',
@@ -84,6 +92,14 @@ export const motel = {
       price2h: 50,
       priceOvernight: 90,
       placeholderHue: 350,
+      description:
+        'Os detalhes certos para mudar a noite. As 6 suítes Luxo (quartos 1 a 6) chegam com espelho no teto e cadeira erótica, somando-se a toda a estrutura essencial. Para casais que querem um clima especial sem abrir mão do conforto.',
+      highlights: [
+        'Espelho no teto',
+        'Cadeira erótica',
+        'Estrutura completa',
+      ],
+      photoCount: 4,
     },
     {
       id: 'super-luxo',
@@ -103,6 +119,14 @@ export const motel = {
       price2h: 80,
       priceOvernight: 90,
       placeholderHue: 8,
+      description:
+        'O pacote completo. São apenas 3 unidades, cada uma com sua personalidade: o quarto 7 vem com pole dance, sofá erótico e espelho no teto; os quartos 8 e 9 trazem banheira de hidromassagem além de todos os diferenciais. Para fazer da estadia um evento.',
+      highlights: [
+        'Hidromassagem nos quartos 8 e 9',
+        'Pole dance no quarto 7',
+        'Sofá erótico e espelho no teto',
+      ],
+      photoCount: 4,
     },
   ],
 

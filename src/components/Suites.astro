@@ -1,9 +1,10 @@
 ---
 import { motel } from "~/data/motel";
 import SuiteCard from "./SuiteCard.astro";
+import SuiteModal from "./SuiteModal.astro";
 ---
 
-<section id="suites" class="section-pad bg-cinema-soft relative lazy-section">
+<section id="suites" class="section-pad bg-cinema-soft relative">
   <div class="container-page">
     <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 reveal">
       <div class="max-w-2xl">
@@ -14,8 +15,7 @@ import SuiteCard from "./SuiteCard.astro";
         </h2>
       </div>
       <p class="text-paper/70 max-w-md text-pretty leading-relaxed">
-        São <strong class="text-paper">16 suítes</strong> distribuídas em três categorias. Escolha entre o
-        essencial bem feito, os toques de luxo ou o pacote completo com hidromassagem.
+        São <strong class="text-paper">16 suítes</strong> distribuídas em três categorias. Toque em um card para ver fotos e detalhes.
       </p>
     </div>
 
@@ -27,4 +27,58 @@ import SuiteCard from "./SuiteCard.astro";
       As fotos serão substituídas pelas imagens reais das suítes em breve.
     </p>
   </div>
+
+  <!-- Modals (one per suite) — rendered outside the cards container so the
+       <dialog> element gets full-screen overlay positioning via the top layer. -->
+  {motel.suites.map((suite) => <SuiteModal suite={suite} />)}
 </section>
+
+<script>
+  // Open: any element with [data-suite-trigger] (click + Enter/Space).
+  // Close: any [data-modal-close] inside the dialog, ESC (native), or
+  //        backdrop click (mousedown outside the dialog content panel).
+  const triggers = document.querySelectorAll<HTMLElement>("[data-suite-trigger]");
+  const dialogs = document.querySelectorAll<HTMLDialogElement>("[data-suite-modal]");
+
+  const openModal = (id: string) => {
+    const dialog = document.getElementById(id);
+    if (dialog instanceof HTMLDialogElement) {
+      dialog.showModal();
+      document.body.style.overflow = "hidden";
+    }
+  };
+
+  const closeModal = (dialog: HTMLDialogElement) => {
+    dialog.close();
+    document.body.style.overflow = "";
+  };
+
+  triggers.forEach((el) => {
+    const targetId = el.getAttribute("data-modal-target");
+    if (!targetId) return;
+    el.addEventListener("click", () => openModal(targetId));
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openModal(targetId);
+      }
+    });
+  });
+
+  dialogs.forEach((dialog) => {
+    // Restore body scroll when the dialog closes (native close, ESC, etc).
+    dialog.addEventListener("close", () => {
+      document.body.style.overflow = "";
+    });
+    // Explicit close buttons
+    dialog.querySelectorAll<HTMLElement>("[data-modal-close]").forEach((btn) => {
+      btn.addEventListener("click", () => closeModal(dialog));
+    });
+    // Backdrop click — clicking the dialog itself (the rect outside the
+    // content panel) closes the modal. We track mousedown to avoid
+    // accidental closes on text-selection drags that finish outside.
+    dialog.addEventListener("mousedown", (e) => {
+      if (e.target === dialog) closeModal(dialog);
+    });
+  });
+</script>

@@ -183,6 +183,70 @@
     background: linear-gradient(160deg, rgba(245, 230, 205, 0.05), rgba(245, 230, 205, 0.02));
     border: 1px solid rgba(245, 230, 205, 0.1);
     border-radius: var(--radius-card);
+    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 320ms ease,
+                box-shadow 320ms ease;
+  }
+
+  /* Hover affordance only on devices with a mouse — touchscreens fire
+     :hover on tap and stick, which looks broken. */
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover {
+      transform: translate3d(0, -3px, 0);
+      border-color: rgba(201, 169, 97, 0.32);
+      box-shadow: 0 22px 44px -22px rgba(0, 0, 0, 0.65),
+                  0 0 0 1px rgba(201, 169, 97, 0.08);
+    }
+    /* Suite cards are clickable — give them a slightly stronger lift
+       and brighten the photo on hover. */
+    [data-suite-trigger]:hover {
+      transform: translate3d(0, -5px, 0);
+      cursor: pointer;
+    }
+    [data-suite-trigger]:hover .suite-photo {
+      transform: scale(1.06);
+      filter: saturate(1.1) brightness(1.05);
+    }
+    [data-suite-trigger]:hover .suite-cta {
+      color: var(--color-gold);
+      transform: translate3d(4px, 0, 0);
+    }
+  }
+  /* Smooth photo transition for both hover-in and hover-out. */
+  .suite-photo {
+    transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
+                filter 320ms ease;
+  }
+  .suite-cta {
+    transition: color 240ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-suite-trigger]:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 4px;
+  }
+
+  /* Modal dialog */
+  .suite-modal::backdrop {
+    background: rgba(10, 10, 10, 0.72);
+    animation: backdrop-in 220ms ease-out forwards;
+  }
+  @keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+
+  .suite-modal {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    max-width: min(64rem, 100vw);
+    width: 100%;
+    max-height: 100dvh;
+  }
+  .suite-modal[open] .suite-modal-content {
+    animation: modal-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes modal-in {
+    from { opacity: 0; transform: translate3d(0, 24px, 0) scale(0.98); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
   }
 
   /* Reveal — opacity-only on touch devices (cheap), opacity+translate on
