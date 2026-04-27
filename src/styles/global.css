@@ -109,14 +109,6 @@
     padding-block: clamp(3.5rem, 8vw, 6rem);
   }
 
-  /* Sections below the fold opt into render-skipping when offscreen.
-     Modern browsers skip layout/paint work for these blocks until they
-     approach the viewport — biggest single win on long mobile scrolls. */
-  .lazy-section {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 800px;
-  }
-
   .eyebrow {
     display: inline-flex;
     align-items: center;

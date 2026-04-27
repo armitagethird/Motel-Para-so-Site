@@ -118,11 +118,16 @@ import { motel, whatsappLink } from "~/data/motel";
     }
   }
 
-  /* Desktop-only: show the live video on top of the blurred bg. The video
-     is no longer CSS-blurred — the blurred poster behind it provides the
-     ambience. The video itself stays visually similar via the dark wash. */
+  /* Desktop: live video on top of the blurred bg, with its own blur and a
+     subtle overscale to hide blur edges. GPU on desktop handles per-frame
+     blur fine — the cinematic look is preserved. */
   @media (min-width: 1024px) {
-    .hero-video { display: block; }
+    .hero-video {
+      display: block;
+      filter: blur(14px) saturate(115%) brightness(0.85);
+      transform: scale(1.06);
+      transform-origin: center;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
