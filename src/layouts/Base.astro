@@ -144,9 +144,23 @@ const jsonLd = {
     <slot />
 
     <script>
-      // Lightweight scroll-reveal using IntersectionObserver. Zero dependencies.
-      const els = document.querySelectorAll(".reveal");
-      if (els.length && "IntersectionObserver" in window) {
+      // Lightweight scroll-reveal — fires *before* the element enters the
+      // viewport so the animation completes by the time the user actually
+      // sees it. On reduced-motion or no IO, reveal everything immediately.
+      const els = document.querySelectorAll<HTMLElement>(".reveal");
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (reduce || !("IntersectionObserver" in window)) {
+        els.forEach((el) => el.classList.add("in"));
+      } else {
+        // Reveal anything already on screen instantly to avoid initial flash.
+        els.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            el.classList.add("in");
+          }
+        });
+
         const io = new IntersectionObserver(
           (entries) => {
             for (const entry of entries) {
@@ -156,11 +170,11 @@ const jsonLd = {
               }
             }
           },
-          { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+          { threshold: 0, rootMargin: "0px 0px 35% 0px" }
         );
-        els.forEach((el) => io.observe(el));
-      } else {
-        els.forEach((el) => el.classList.add("in"));
+        els.forEach((el) => {
+          if (!el.classList.contains("in")) io.observe(el);
+        });
       }
     </script>
   </body>
