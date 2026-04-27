@@ -232,14 +232,23 @@
   }
   @keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
 
+  /* Force dead-center positioning regardless of UA defaults (Chrome and
+     iOS Safari handle dialog auto-margins inconsistently and can push
+     the modal to a corner). */
   .suite-modal {
     background: transparent;
     border: 0;
     padding: 0;
     color: inherit;
-    max-width: min(64rem, 100vw);
-    width: 100%;
-    max-height: 100dvh;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    width: min(64rem, calc(100vw - 1.5rem));
+    max-width: calc(100vw - 1.5rem);
+    max-height: calc(100dvh - 1.5rem);
+    overflow: visible;
   }
   .suite-modal[open] .suite-modal-content {
     animation: modal-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
